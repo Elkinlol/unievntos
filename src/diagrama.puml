@@ -1,0 +1,223 @@
+@startuml
+
+abstract class Persona {
+    - cedula: String
+    - nombreCompleto: String
+    - telefono: String
+    - email: String
+    - contraseña: String
+
+    +getCedula()
+    +getNombreCompleto()
+    +getTelefono()
+    +getEmail()
+    +getContraseña()
+    +setCedula()
+    +setNombreCompleto()
+    +setTelefono()
+    +setEmail()
+    +setContraseña()
+    + registrarse()
+    + loguearse()
+}
+
+class Cliente {
+    - listaCompras: List<Compra>
+    + buscarEventos()
+    + realizarCompra()
+    + cancelarCompra()
+    + redimirCupon()
+    + listarCompras()
+}
+
+class Administrador {
+    - static instancia: Administrador
+    - constructor privado
+    + static obtenerInstancia(): Administrador
+    + gestionarEventos()
+    + crearCupon()
+    + obtenerEstadisticasEvento()
+    + listarEventosPorCiudad()
+}
+
+class Evento {
+    - nombreEvento: String
+    - ciudad: String
+    - descripcion: String
+    - tipo: TipoEvento
+    - imagen: String
+    - fecha: Date
+    - direccion: String
+    - localidades: List<Localidad>
+    - observadores: List<Observador>
+
+    +getNombreEvento(): String
+    +getCiudad():String
+    +getDescripcion():String
+    +getTipoEvento():TipoEvento
+    +getImagen()
+    +getFecha():Date
+    +getDireccion():String
+    +getLocalidades():List
+    +getObservadores()List
+    +setNombreEvento(String nombreEvento):void
+    +setCiudad(String nuevaCiudad):void
+    +setDescripcion(String nuevaDescripcion):void
+    +setTipoEvento(TipoEvento nuevoTipoEvento):void
+    +setImagen():void
+    +setFecha(Date nuevaFecha):void
+    +setDireccion(String nuevaDireccion):void
+    + agregarLocalid}ad(localidad: Localidad): void
+    + agregarObservador(observador: Observador): void
+    + notificarObservadores(): void
+}
+
+class Localidad {
+    - getNombreLocalidad: String
+    - precio: double
+    - capacidadMaxima: int
+
+    +constructor(String nombre, double precio, int capacidadMaxima)
+    +getNombreLocalidad():String
+    +getPrecio():double
+    +getCapacidadMaxima():int
+
+    +setPrecio(double nuevoPrecio):void
+    +setCapacidadMaxima(int nuevaCapacidad):void
+}
+
+class Compra {
+    - cliente: Cliente
+    - evento: Evento
+    - localidad: Localidad
+    - cupon: Cupon
+    - factura: Factura
+
+    +getCliente()
+    +getEvento()
+    +getLocalidad()
+    +getCupon()
+    +getFactura()
+    +setCliente()
+    +setEvento()
+    +setLocalidad()
+    +setCupon()
+    +setFactura()
+    + generarCodigoQR()
+    + obtenerTotal(): double
+}
+
+class Cupon {
+    - codigo: String
+    - porcentajeDescuento: double
+
+    +constructor(String  codigo, double porcentajeDescuento)
+    +getCodigo():String
+    +getPorcentajeDescuento():double
+
+    +setCodigo(Sting nuevoCodigo):void
+    +setPorcentajeDescuento(double nuevoPorcentajeDescuento):void
+}
+
+class Factura {
+    - subtotal: double
+    - total: double
+    - fecha: Date
+    - codigo: String
+
+    +constructor(double subtotal, double total, Date fecha, String codigo)
+    +getSubtotal():double
+    +getTotal():double
+    +getFecha():Date
+    +getCodigoFactura():String
+    +getSubtotal(double nuevoSubTotal):void
+    +setTotal(double nuevoTotal):void
+    +setFecha(Date nuevaFecha):void
+    +setCodigoFactura(String nuevoCodigoFactura):void
+}
+
+interface Observador {
+    + actualizar(evento: Evento): void
+}
+
+class ClienteObserver implements Observador {
+    + actualizar(evento: Evento): void
+}
+
+interface EstrategiaBusqueda {
+    + buscarEventos(criterio: String): List<Evento>
+}
+
+class BusquedaPorNombre implements EstrategiaBusqueda {
+    + buscarEventos(criterio: String): List<Evento>
+}
+
+class BusquedaPorTipo implements EstrategiaBusqueda {
+    + buscarEventos(criterio: String): List<Evento>
+}
+
+class BusquedaPorCiudad implements EstrategiaBusqueda {
+    + buscarEventos(criterio: String): List<Evento>
+}
+
+interface CompraStrategy {
+    + obtenerTotal(): double
+}
+
+class CompraBase implements CompraStrategy {
+    + obtenerTotal(): double
+}
+
+class CompraConCupon implements CompraStrategy {
+    - compraBase: CompraStrategy
+    + obtenerTotal(): double
+}
+
+Persona <|-- Cliente
+Persona <|-- Administrador
+Evento *-- Localidad
+Cliente o-- Compra
+Compra o-- Cupon
+Compra *-- Factura
+Evento-->TipoEvento
+Administrador-->Evento
+
+ENUM TipoEvento{
+      CONCIERTO,
+      TEATRO,
+      DEPORTE,
+      FESTIVAL,
+      OTRO
+}
+
+interface CrearEvento {
+    + crearEvento(): Evento
+}
+
+class ConciertoFactory {
+    + crearEvento(): Evento
+}
+
+class TeatroFactory {
+    + crearEvento(): Evento
+}
+
+class DeporteFactory {
+    + crearEvento(): Evento
+}
+
+class FestivalFactory {
+    + crearEvento(): Evento
+}
+
+class OtroEventoFactory {
+    + crearEvento(): Evento
+}
+
+CrearEvento <|.. ConciertoFactory
+CrearEvento <|.. TeatroFactory
+CrearEvento <|.. DeporteFactory
+CrearEvento <|.. FestivalFactory
+CrearEvento <|.. OtroEventoFactory
+
+@enduml
